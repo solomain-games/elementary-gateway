@@ -1,0 +1,6 @@
+# Профиль local: разработка на своём компьютере.
+
+management:
+  endpoint:
+    health:
+      show-details: always   # локально видно состояние каждого компонента
