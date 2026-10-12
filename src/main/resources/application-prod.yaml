@@ -1,5 +1,10 @@
 # Профиль prod: боевой сервер. Значения приходят из переменных окружения, секретов в файле нет.
 
+elementary:
+  services:
+    user-service: ${USER_SERVICE_URI}   # например http://user-service:8082 внутри сети Docker
+    game-service: ${GAME_SERVICE_URI}
+
 management:
   endpoint:
     health:

@@ -1,0 +1,20 @@
+### Гостевой вход через шлюз (нужен запущенный user-service :8082)
+POST http://localhost:8080/api/auth/guest
+Content-Type: application/json
+
+{
+  "name": "Ватсон"
+}
+
+### Запрос в game-service через шлюз (нужен запущенный game-service :8081).
+### Пока Г2 не сделан, game-service отклоняет его сам (401/403) — это и показывает, что запрос дошёл.
+GET http://localhost:8080/api/game/rooms/TEST
+
+### Неизвестный путь: шлюз никуда не пересылает, отвечает 404 сам
+GET http://localhost:8080/api/unknown
+
+### CORS preflight с адреса фронтенда — 200 и Access-Control-Allow-Origin
+OPTIONS http://localhost:8080/api/auth/guest
+Origin: http://localhost:5173
+Access-Control-Request-Method: POST
+Access-Control-Request-Headers: content-type
