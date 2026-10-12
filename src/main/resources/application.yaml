@@ -1,8 +1,36 @@
+# Общие настройки для всех профилей.
+# Профиль выбирается переменной SPRING_PROFILES_ACTIVE; если не задан — local.
+
 spring:
   application:
     name: gateway
   profiles:
     default: local
+  cloud:
+    gateway:
+      server:
+        webflux:
+          # Маршруты проверяются по порядку, срабатывает первый подходящий.
+          # Путь запроса пересылается как есть: /api/auth/guest → {user-service}/api/auth/guest.
+          # Адреса сервисов задаются в профилях (elementary.services.*).
+          routes:
+            - id: user-service-auth
+              uri: ${elementary.services.user-service}
+              predicates:
+                - Path=/api/auth/**
+            - id: game-service-api
+              uri: ${elementary.services.game-service}
+              predicates:
+                - Path=/api/game/**
+            # WebSocket: адрес тот же http://, шлюз сам переключается на ws://,
+            # когда видит в запросе заголовок Upgrade: websocket. /ws/** совпадает и с /ws.
+            - id: game-service-ws
+              uri: ${elementary.services.game-service}
+              predicates:
+                - Path=/ws/**
+          httpclient:
+            connect-timeout: 2000   # мс: сервис не принял соединение — быстро отвечаем ошибкой
+            response-timeout: 10s   # REST-запрос висит дольше — обрываем (на открытый WebSocket не влияет)
 
 server:
   port: 8080

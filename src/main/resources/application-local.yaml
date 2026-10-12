@@ -1,5 +1,28 @@
 # Профиль local: разработка на своём компьютере.
 
+elementary:
+  services:
+    user-service: http://localhost:8082
+    game-service: http://localhost:8081
+
+spring:
+  cloud:
+    gateway:
+      server:
+        webflux:
+          # CORS нужен, только когда страница открыта с другого адреса, чем API.
+          # Через прокси Vite (:5173 → :8080) браузер его не требует, но так можно
+          # обращаться к шлюзу с фронтенда и напрямую. В prod фронтенд и API на одном
+          # домене за Caddy, поэтому там CORS не настроен.
+          globalcors:
+            cors-configurations:
+              '[/**]':
+                allowed-origins: http://localhost:5173
+                allowed-methods: GET, POST
+                allowed-headers: Authorization, Content-Type
+                exposed-headers: Location   # POST /api/game/rooms отвечает 201 с Location
+                max-age: 3600               # браузер кеширует ответ на preflight час
+
 management:
   endpoint:
     health:
